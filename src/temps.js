@@ -1,5 +1,5 @@
 'use strict';
-const temps = (() => {
+module.exports = (() => {
   const isArray = obj => typeof obj === 'object' && ((Array.isArray && Array.isArray(obj)) || obj.constructor === Array || obj instanceof Array);
 
   // GLobal State Events: STATE_RESET, STATE_REVERTED
