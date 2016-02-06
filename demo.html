@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ETC</title>
+  <title>Temps</title>
   <style type="text/css">
   div.hide {
     display:none;
@@ -26,11 +26,11 @@
 
 <div id="root"></div>
 
-<script type="text/javascript" src="./etc.js"></script>
+<script type="text/javascript" src="./temps.js"></script>
 <script type="text/javascript">
 'use strict';
 
-etc.setInitialState({
+temps.setInitialState({
   name: "Sam",
   age: 25,
   spouse: {
@@ -39,28 +39,28 @@ etc.setInitialState({
   }
 });
 
-const welcomeCont = etc.template(state => {
+const welcomeCont = temps.template(state => {
   return `<h1>${welcomeMessage.render()}</h1>`;
 }, cont => {
   cont.classList.add('helvetica');
 });
 
-const welcomeMessage = etc.template(state => {
+const welcomeMessage = temps.template(state => {
   return `<span>Welcome!</span>`
 });
 
 document.getElementById("root").appendChild(welcomeCont.render());
 
 
-const infoCont = etc.template(state => `
+const infoCont = temps.template(state => `
   <div class="infoCont">
     ${nameElm.render()}${ageElm.render()}${spouseElm.render()}
   </div>`);
 infoCont.attachStateEvent('BIRTHDAY', 'STATE_RESET', 'STATE_REVERTED');
 
-const nameElm = etc.template(state => `<div>${state.name}</div>`);
-const ageElm = etc.template(state => `<div class="${state.age > 30 ? "old": ""}">${state.age}</div>`);
-const spouseElm = etc.template(state => `
+const nameElm = temps.template(state => `<div>${state.name}</div>`);
+const ageElm = temps.template(state => `<div class="${state.age > 30 ? "old": ""}">${state.age}</div>`);
+const spouseElm = temps.template(state => `
   <div class="spouse">
     <p>${state.spouse.name}</p>
     <p>${state.spouse.age}</p>
@@ -69,7 +69,7 @@ const spouseElm = etc.template(state => `
 document.getElementById("root").appendChild(infoCont.render());
 
 
-etc.on("BIRTHDAY", state => {
+temps.on("BIRTHDAY", state => {
   state.age++;
 })
 
@@ -205,7 +205,7 @@ etc.on("BIRTHDAY", state => {
 //   state.birthday = true;
 // });
 
-// i should combine the state into the global `etc` object so I won;t have to define
+// i should combine the state into the global `temps` object so I won;t have to define
 // the state (e.g. () => state.get() )
 
 
@@ -213,7 +213,7 @@ etc.on("BIRTHDAY", state => {
 
 
 
-// const welcomeCont = etc(
+// const welcomeCont = temps(
 //   // null, 
 //   null,
 //   () => (`
@@ -221,7 +221,7 @@ etc.on("BIRTHDAY", state => {
 //   `)
 // );
 
-// const welcomeInner = etc(
+// const welcomeInner = temps(
 //   // null, 
 //   null,
 //   () => (`
@@ -231,7 +231,7 @@ etc.on("BIRTHDAY", state => {
 
 // document.getElementById("root").appendChild(welcomeCont.render())
 
-// const info = etc(
+// const info = temps(
 //   // document.querySelector("#root"),
 //   () => state.get(), 
 //   state => (`
@@ -247,7 +247,7 @@ etc.on("BIRTHDAY", state => {
 
 
 
-// const form = etc(
+// const form = temps(
 //   // document.querySelector("#root"),
 //   () => state.get(), 
 //   state => {

@@ -1,6 +1,6 @@
 {
-  "name": "etcetera",
-  "productName": "Etcetera",
+  "name": "temps",
+  "productName": "Temps",
   "version": "0.0.1",
   "description": "Template library taking advantage of es2015 template strings",
   "main": "etc.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "nsg": "nsg",
     "test": "jasmine",
-    "transpile": "babel src/etc.js | uglifyjs - -mco 'etc.js'"
+    "transpile": "babel src/temps.js | uglifyjs - -mco 'temps.js'"
   },
   "author": "Sam Eaton",
   "license": "UNLICENCED",
