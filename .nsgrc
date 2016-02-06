@@ -1,0 +1,9 @@
+{
+	"name":"Etcetera",
+	"primary": ["test", "transpile"],
+	"exclude": ["nsg"],
+	"silent": ["test"],
+	"watch": {
+		"src/*.js": "transpile"
+	}
+}

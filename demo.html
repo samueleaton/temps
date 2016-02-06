@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ETC</title>
+  <style type="text/css">
+  div.hide {
+    display:none;
+  }
+  div.infoCont {
+    outline:1px solid gray;
+  }div.old {
+    color:red;
+  }
+  *.helvetica {
+    font-family:'helvetica neue';
+  }
+  h1 span {
+    color: teal;
+  }
+  div.spouse {
+    background: orange;
+  }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/javascript" src="./etc.js"></script>
+<script type="text/javascript">
+'use strict';
+
+etc.setInitialState({
+  name: "Sam",
+  age: 25,
+  spouse: {
+    name: "Jasmine",
+    age: 22
+  }
+});
+
+const welcomeCont = etc.template(state => {
+  return `<h1>${welcomeMessage.render()}</h1>`;
+}, cont => {
+  cont.classList.add('helvetica');
+});
+
+const welcomeMessage = etc.template(state => {
+  return `<span>Welcome!</span>`
+});
+
+document.getElementById("root").appendChild(welcomeCont.render());
+
+
+const infoCont = etc.template(state => `
+  <div class="infoCont">
+    ${nameElm.render()}${ageElm.render()}${spouseElm.render()}
+  </div>`);
+infoCont.attachStateEvent('BIRTHDAY', 'STATE_RESET', 'STATE_REVERTED');
+
+const nameElm = etc.template(state => `<div>${state.name}</div>`);
+const ageElm = etc.template(state => `<div class="${state.age > 30 ? "old": ""}">${state.age}</div>`);
+const spouseElm = etc.template(state => `
+  <div class="spouse">
+    <p>${state.spouse.name}</p>
+    <p>${state.spouse.age}</p>
+  </div>`);
+
+document.getElementById("root").appendChild(infoCont.render());
+
+
+etc.on("BIRTHDAY", state => {
+  state.age++;
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+// make it so elements can subscribe to changes to state.
+// const state = (() => {
+//   const events = {};
+//   const registeredElements = {};
+//   let initialState;
+//   let previousState
+//   let newState;
+
+//   function get() {
+//     previousState = Object.assign({}, newState);
+//     return newState;
+//   }
+//   function reset() {
+//     initialState = {name: "samuel", age: 25, birthday: false};
+//     previousState = Object.assign({}, initialState);
+//     newState = Object.assign({}, initialState);
+//   }
+//   function on(eventName, cb) {
+//     if (typeof events[eventName] === "undefined")
+//       events[eventName] = [];
+//     events[eventName].push(cb);
+//   }
+//   function emit(eventName, ...args) {
+//     if (events[eventName]) {
+//       events[eventName].forEach(function(cb) {
+//         cb(newState, ...args);
+//         if (Array.isArray(registeredElements[eventName]))
+//           registeredElements[eventName].forEach(e => e.render())
+//       });
+//     }
+//   }
+//   function register(eventName, element) {
+//     if (typeof registeredElements[eventName] === "undefined")
+//       registeredElements[eventName] = [];
+//     registeredElements[eventName].push(element);
+//   }
+//   reset();
+//   return {
+//     get, on, reset, emit, register
+//   };
+// })();
+
+// state.on('BIRTHDAY', (state, newAge) => {
+//   state.age = parseInt(newAge) || parseInt(state.age) + 1;
+//   state.birthday = true;
+// });
+
+// i should combine the state into the global `etc` object so I won;t have to define
+// the state (e.g. () => state.get() )
+
+
+
+
+
+
+// const welcomeCont = etc(
+//   // null, 
+//   null,
+//   () => (`
+//     <h1>${welcomeInner}</h1>
+//   `)
+// );
+
+// const welcomeInner = etc(
+//   // null, 
+//   null,
+//   () => (`
+//     <span>Welcome!</span>
+//   `)
+// );
+
+// document.getElementById("root").appendChild(welcomeCont.render())
+
+// const info = etc(
+//   // document.querySelector("#root"),
+//   () => state.get(), 
+//   state => (`
+//     <div class="${state.birthday ? "" : "hide" }">
+//       <p>My name is ${state.name}</p>
+//       <p>I am is ${state.age}</p>
+//     </div>`
+//   )
+// );
+
+// state.register('BIRTHDAY', info);
+// document.getElementById("root").appendChild(info.render())
+
+
+
+// const form = etc(
+//   // document.querySelector("#root"),
+//   () => state.get(), 
+//   state => {
+//   return `
+//     <form id="formy">
+//       <input type="text" placeholder="name">
+//       <input id="age" type="text" placeholder="age">
+//       <input type="submit" value="B-Day!">
+//       <% %>
+//     </div>
+//   `;
+//   },
+//   form => {
+//     form.addEventListener('submit', evt => {
+//       console.log("form submit")
+//       evt.preventDefault();
+//       state.emit("BIRTHDAY", document.querySelector("#age").value.trim());
+//     }); 
+//   }
+// );
+// state.register('BIRTHDAY', form);
+// document.getElementById("root").appendChild(form.render())
+
+</script>
+</body>
+</html>
