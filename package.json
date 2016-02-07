@@ -1,7 +1,7 @@
 {
   "name": "temps",
   "productName": "Temps",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Template library taking advantage of es2015 template strings",
   "main": "etc.js",
   "directories": {
