@@ -20,13 +20,22 @@
   div.spouse {
     background: orange;
   }
+  div.age {
+    background-color: purple;
+    color:white;
+    cursor:pointer;
+    padding :10px;
+  }
+  div.age:hover {
+    background-color: indigo;
+  }
   </style>
 </head>
 <body>
 
 <div id="root"></div>
 
-<script type="text/javascript" src="./temps.js"></script>
+<script type="text/javascript" src="./src/temps.js"></script>
 <script type="text/javascript">
 'use strict';
 
@@ -39,37 +48,38 @@ temps.setInitialState({
   }
 });
 
-const welcomeCont = temps.template(state => {
-  return `<h1>${welcomeMessage.render()}</h1>`;
-}, cont => {
-  cont.classList.add('helvetica');
-});
 
-const welcomeMessage = temps.template(state => {
-  return `<span>Welcome!</span>`
-});
-
-document.getElementById("root").appendChild(welcomeCont.render());
 
 
 const infoCont = temps.template(state => `
   <div class="infoCont">
     ${nameElm.render()}${ageElm.render()}${spouseElm.render()}
   </div>`);
-infoCont.attachStateEvent('BIRTHDAY', 'STATE_RESET', 'STATE_REVERTED');
+
 
 const nameElm = temps.template(state => `<div>${state.name}</div>`);
-const ageElm = temps.template(state => `<div class="${state.age > 30 ? "old": ""}">${state.age}</div>`);
+
+const ageElm = temps.template(state => (`
+  <div class="age ${state.age > 30 ? "old": ""}">${state.age}</div>
+`), 
+{
+  click: "BIRTHDAY"
+});
+
 const spouseElm = temps.template(state => `
   <div class="spouse">
     <p>${state.spouse.name}</p>
     <p>${state.spouse.age}</p>
   </div>`);
 
+
+infoCont.attachStateEvent('BIRTHDAY', 'STATE_RESET', 'STATE_REVERTED');
+
 document.getElementById("root").appendChild(infoCont.render());
 
 
 temps.on("BIRTHDAY", state => {
+  console.log('incrementing state!!!');
   state.age++;
 })
 
@@ -85,7 +95,17 @@ temps.on("BIRTHDAY", state => {
 
 
 
+// const welcomeCont = temps.template(state => {
+//   return `<h1>${welcomeMessage.render()}</h1>`;
+// }, cont => {
+//   cont.classList.add('helvetica');
+// });
 
+// const welcomeMessage = temps.template(state => {
+//   return `<span>Welcome!</span>`
+// });
+
+// document.getElementById("root").appendChild(welcomeCont.render());
 
 
 

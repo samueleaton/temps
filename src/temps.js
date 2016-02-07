@@ -39,16 +39,17 @@ module.exports = (() => {
         setNewState(tempState);
       }
     }
-    console.log('evt: ', evt);
-    console.log('attachedTemplates: ', attachedTemplates);
-    console.log('attachedTemplates[evt]: ', attachedTemplates[evt]);
     if (attachedTemplates[evt]) {
-      attachedTemplates[evt].forEach(e => e.render());
+      attachedTemplates[evt].forEach(e => {
+        e.render();
+      });
     }
   };
 
 
-  function template(factory, scripts) {
+  const possibleDomEvents = ['abort', 'autocomplete', 'autocompleteerror', 'beforecopy', 'beforecut', 'beforepaste', 'blur', 'cancel', 'canplay', 'canplaythrough', 'change', 'click', 'close', 'contextmenu', 'copy', 'cuechange', 'cut', 'dblclick', 'drag', 'dragend', 'dragenter', 'dragleave', 'dragover', 'dragstart', 'drop', 'durationchange', 'emptied', 'ended', 'error', 'focus', 'input', 'invalid', 'keydown', 'keypress', 'keyup', 'load', 'loadeddata', 'loadedmetadata', 'loadstart', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup', 'mousewheel', 'paste', 'pause', 'play', 'playing', 'progress', 'ratechange', 'reset', 'resize', 'scroll', 'search', 'seeked', 'seeking', 'select', 'selectstart', 'show', 'stalled', 'submit', 'suspend', 'timeupdate', 'toggle', 'volumechange', 'waiting'];
+
+  function template(factory, eventsObj) {
     const strings = {
       current: "",
       temp: ""
@@ -57,18 +58,46 @@ module.exports = (() => {
       current: null,
       temp: null
     };
-    const stringify = () => factory(currentState()).trim();
+    const templateEvents = {
+      onRender: null
+    };
+
+    const stringify = () => {
+      let str = factory(currentState()).trim();
+
+      const domEvents = [];
+        if (typeof eventsObj === "object") {
+          Object.keys(eventsObj).forEach(evt => {
+            if (possibleDomEvents.indexOf(evt) === -1)
+              return console.error(evt + ' is not a valid event');
+            if (typeof eventsObj[evt] !== 'string')
+              return console.error(evt + ' is not a valid string');
+            domEvents.push(`on${evt}="(function(){temps.emit('${eventsObj[evt]}')})()" `);
+          });
+        }
+        const domEventsStr = domEvents.join("").trim();
+        if (domEventsStr.length) {
+          const matches = str.match(/^<\w+(-\w+)?(\s|>)/);
+          if (!matches || !matches.length) {
+            console.error('no match for ' + str);
+            return str;
+          }
+          const openTag = matches[0];
+          const front = openTag.slice(0, -1);
+          const lastChar = openTag.slice(-1);
+          return str.replace(openTag, front + ' ' + domEventsStr + ' ' + lastChar);
+        }
+      return str;
+    };
 
     return {
       render() {
         strings.temp = stringify();
 
         // if element is unchanged
-        if (elements.current && strings.temp === strings.current) {
+        if (elements.current && (strings.temp === strings.current)) {
           return elements.current; 
         }
-
-        // console.log('re-rendering');
 
         const tempElement = document.createElement('div');
         tempElement.innerHTML = strings.temp;
@@ -84,7 +113,6 @@ module.exports = (() => {
 
         // if elmnt has been rendered before, replace it
         if (elements.current && elements.current.parentNode) {
-          // console.log('\n** doing the swap **\n');
           elements.current.parentNode.replaceChild(
             elements.temp, elements.current
           )
@@ -94,9 +122,6 @@ module.exports = (() => {
         strings.current = strings.temp;
         elements.current = elements.temp;
         strings.temp = elements.temp = null;
-
-        if (typeof scripts == "function")
-          scripts(elements.current);
 
         return elements.current;
       },
@@ -113,15 +138,12 @@ module.exports = (() => {
     };
   }
 
-  return {
-    getState: () => currentState(),
-    resetState: () => resetState(),
-    setInitialState: obj => setInitialState(obj),
-    stateHistory: () => states.map(x => x),
-    revertState: n => revertState(n),
-    template: (factory, scripts) => template(factory, scripts),
-    on: (evt, cb) => on(evt, cb),
-    emit: (evt, ...args) => emit(evt, ...args)
-  };
-
+  template.getState = () => currentState();
+  template.resetState = () => resetState();
+  template.setInitialState = obj => setInitialState(obj);
+  template.stateHistory = () => states.map(x => x);
+  template.revertState = n => revertState(n);
+  template.on = (evt, cb) => on(evt, cb);
+  template.emit = (evt, ...args) => emit(evt, ...args);
+  return template;
 })();
