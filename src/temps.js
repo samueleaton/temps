@@ -1,6 +1,5 @@
 'use strict';
-// module.exports = (() => {
-const temps = (() => {
+module.exports = (() => {
   const isArray = obj => typeof obj === 'object' && ((Array.isArray && Array.isArray(obj)) || obj.constructor === Array || obj instanceof Array);
 
   // GLobal State Events: STATE_RESET, STATE_REVERTED
@@ -82,7 +81,6 @@ const temps = (() => {
                   return e
               }).join(',') : '' ;
 
-              console.log('_args: ', _args);
               domEvents.push(
                 `on${evt}="(function(){temps.emit('${_evt}'${_args})})()" `
               );
