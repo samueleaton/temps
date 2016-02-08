@@ -1,7 +1,7 @@
 {
   "name": "temps",
   "productName": "Temps",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Template library taking advantage of es2015 template strings",
   "main": "temps.js",
   "directories": {
@@ -10,7 +10,9 @@
   "scripts": {
     "nsg": "nsg",
     "test": "jasmine",
-    "transpile": "babel src/temps.js | uglifyjs - -mco 'temps.js'"
+    "transpile": "babel src/temps.js | uglifyjs - -mco 'temps.js'",
+    "update-version": "ruby bin/update_version.rb",
+    "prepublish": "ruby bin/prepublish.rb"
   },
   "author": "Sam Eaton",
   "license": "UNLICENCED",
