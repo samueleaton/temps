@@ -59,9 +59,6 @@ const temps = (() => {
       current: null,
       temp: null
     };
-    const templateEvents = {
-      onRender: null
-    };
 
     const stringify = () => {
       let str = factory(currentState()).trim();
