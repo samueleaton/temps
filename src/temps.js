@@ -1,5 +1,6 @@
 'use strict';
-module.exports = (() => {
+// module.exports = (() => {
+const temps = (() => {
   const isArray = obj => typeof obj === 'object' && ((Array.isArray && Array.isArray(obj)) || obj.constructor === Array || obj instanceof Array);
 
   // GLobal State Events: STATE_RESET, STATE_REVERTED
@@ -70,9 +71,32 @@ module.exports = (() => {
           Object.keys(eventsObj).forEach(evt => {
             if (possibleDomEvents.indexOf(evt) === -1)
               return console.error(evt + ' is not a valid event');
-            if (typeof eventsObj[evt] !== 'string')
-              return console.error(evt + ' is not a valid string');
-            domEvents.push(`on${evt}="(function(){temps.emit('${eventsObj[evt]}')})()" `);
+
+            // parse event args
+            if (isArray(eventsObj[evt])) {
+              if (!eventsObj[evt].length)
+                return console.error('empty array for ' + evt + ' event');
+              const _evt = eventsObj[evt].shift();
+
+              const _args = eventsObj[evt].length ? ',' + eventsObj[evt].map(e => {
+                if (typeof e === 'string')
+                  return `'${e}'`;
+                else
+                  return e
+              }).join(',') : '' ;
+
+              console.log('_args: ', _args);
+              domEvents.push(
+                `on${evt}="(function(){temps.emit('${_evt}'${_args})})()" `
+              );
+            }
+            else if (typeof eventsObj[evt] === 'string') {
+              domEvents.push(
+                `on${evt}="(function(){temps.emit('${eventsObj[evt]}')})()" `
+              );
+            }
+            else
+              console.error('could not parse value for ' + evt);  
           });
         }
         const domEventsStr = domEvents.join("").trim();

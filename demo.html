@@ -48,25 +48,22 @@ temps.setInitialState({
   }
 });
 
-
-
-
-const infoCont = temps.template(state => `
+const infoCont = temps(state => `
   <div class="infoCont">
-    ${nameElm.render()}${ageElm.render()}${spouseElm.render()}
+    ${nameElm}${ageElm}${spouseElm}
   </div>`);
 
 
-const nameElm = temps.template(state => `<div>${state.name}</div>`);
+const nameElm = temps(state => `<div>${state.name}</div>`);
 
-const ageElm = temps.template(state => (`
+const ageElm = temps(state => (`
   <div class="age ${state.age > 30 ? "old": ""}">${state.age}</div>
 `), 
 {
   click: "BIRTHDAY"
 });
 
-const spouseElm = temps.template(state => `
+const spouseElm = temps(state => `
   <div class="spouse">
     <p>${state.spouse.name}</p>
     <p>${state.spouse.age}</p>
@@ -85,211 +82,23 @@ temps.on("BIRTHDAY", state => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-// const welcomeCont = temps.template(state => {
-//   return `<h1>${welcomeMessage.render()}</h1>`;
-// }, cont => {
-//   cont.classList.add('helvetica');
-// });
-
-// const welcomeMessage = temps.template(state => {
-//   return `<span>Welcome!</span>`
-// });
-
-// document.getElementById("root").appendChild(welcomeCont.render());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-// make it so elements can subscribe to changes to state.
-// const state = (() => {
-//   const events = {};
-//   const registeredElements = {};
-//   let initialState;
-//   let previousState
-//   let newState;
-
-//   function get() {
-//     previousState = Object.assign({}, newState);
-//     return newState;
-//   }
-//   function reset() {
-//     initialState = {name: "samuel", age: 25, birthday: false};
-//     previousState = Object.assign({}, initialState);
-//     newState = Object.assign({}, initialState);
-//   }
-//   function on(eventName, cb) {
-//     if (typeof events[eventName] === "undefined")
-//       events[eventName] = [];
-//     events[eventName].push(cb);
-//   }
-//   function emit(eventName, ...args) {
-//     if (events[eventName]) {
-//       events[eventName].forEach(function(cb) {
-//         cb(newState, ...args);
-//         if (Array.isArray(registeredElements[eventName]))
-//           registeredElements[eventName].forEach(e => e.render())
-//       });
-//     }
-//   }
-//   function register(eventName, element) {
-//     if (typeof registeredElements[eventName] === "undefined")
-//       registeredElements[eventName] = [];
-//     registeredElements[eventName].push(element);
-//   }
-//   reset();
-//   return {
-//     get, on, reset, emit, register
-//   };
-// })();
-
-// state.on('BIRTHDAY', (state, newAge) => {
-//   state.age = parseInt(newAge) || parseInt(state.age) + 1;
-//   state.birthday = true;
-// });
-
-// i should combine the state into the global `temps` object so I won;t have to define
-// the state (e.g. () => state.get() )
-
-
-
-
-
-
-// const welcomeCont = temps(
-//   // null, 
-//   null,
-//   () => (`
-//     <h1>${welcomeInner}</h1>
-//   `)
-// );
-
-// const welcomeInner = temps(
-//   // null, 
-//   null,
-//   () => (`
-//     <span>Welcome!</span>
-//   `)
-// );
-
-// document.getElementById("root").appendChild(welcomeCont.render())
-
-// const info = temps(
-//   // document.querySelector("#root"),
-//   () => state.get(), 
-//   state => (`
-//     <div class="${state.birthday ? "" : "hide" }">
-//       <p>My name is ${state.name}</p>
-//       <p>I am is ${state.age}</p>
-//     </div>`
-//   )
-// );
-
-// state.register('BIRTHDAY', info);
-// document.getElementById("root").appendChild(info.render())
-
-
-
-// const form = temps(
-//   // document.querySelector("#root"),
-//   () => state.get(), 
-//   state => {
-//   return `
-//     <form id="formy">
-//       <input type="text" placeholder="name">
-//       <input id="age" type="text" placeholder="age">
-//       <input type="submit" value="B-Day!">
-//       <% %>
-//     </div>
-//   `;
-//   },
-//   form => {
-//     form.addEventListener('submit', evt => {
-//       console.log("form submit")
-//       evt.preventDefault();
-//       state.emit("BIRTHDAY", document.querySelector("#age").value.trim());
-//     }); 
-//   }
-// );
-// state.register('BIRTHDAY', form);
-// document.getElementById("root").appendChild(form.render())
+const fruits = ['apple', 'orange', 'lemon', 'grape'];
+
+const fruitsList = temps(state => `
+  <ul>${ fruits.map( f => createFruitItem(f) ).join('')}</ul>
+`);
+
+function createFruitItem(f) {
+  return temps(state => `<li>${f}</li>`, {click: ['FRUIT_CLICKED', f, f.length]});
+}
+
+temps.on('FRUIT_CLICKED', (state, fruit, fruitLength) => {
+  console.log('\nstate: ', state);
+  console.log('fruit: ', fruit);
+  console.log('fruitLength: ', fruitLength);
+});
+
+document.getElementById("root").appendChild(fruitsList.render());
 
 </script>
 </body>
