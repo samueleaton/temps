@@ -2,11 +2,19 @@
 module.exports = (() => {
   const isArray = obj => typeof obj === 'object' && ((Array.isArray && Array.isArray(obj)) || obj.constructor === Array || obj instanceof Array);
 
-  // GLobal State Events: STATE_RESET, STATE_REVERTED
+  // GLobal State Events: STATE_RESET, STATE_REVERTED, STATE_MODIFIED
 
   const states = [];
+  const STATE_RESET = 'STATE_RESET';
+  const STATE_REVERTED = 'STATE_REVERTED';
+  const STATE_MODIFIED = 'STATE_MODIFIED';
 
   const currentState = () => states[states.length - 1];
+
+  const resetState = () => {
+    states.splice(1);
+    emit(STATE_RESET);
+  };
 
   const revertState = n => {
     if (states.length > 1)
@@ -14,13 +22,23 @@ module.exports = (() => {
     if (typeof n === 'number' && n > 1)
       revertState(n - 1)
     else
-      emit('STATE_REVERTED');  
+      emit(STATE_REVERTED);  
   };
 
-  const resetState = () => {
-    states.splice(1);
-    emit('STATE_RESET');
+ const modifyState = func => {
+    console.log('modifying state: ', currentState());
+    const tempState = Object.assign({}, currentState());
+    func(tempState);
+    setNewState(tempState);
+    console.log('modified state: ', currentState());
+    emit(STATE_MODIFIED);
   };
+
+  const previousState = () => {
+    if (states.length <= 2)
+      return states[1];
+    return states[states.length - 2];
+  }
 
   const setInitialState = obj => states[0] = obj;
   const setNewState = obj => states.push(obj);
@@ -36,8 +54,9 @@ module.exports = (() => {
   
   const emit = (evt, ...args) => {
     if (events[evt]) {
-      if (evt === "STATE_RESET" || evt === "STATE_REVERTED") {
+      if (evt === STATE_RESET || evt === STATE_REVERTED || evt === STATE_MODIFIED) {
         events[evt].forEach(cb => cb(currentState(), ...args));
+        console.log('STATE_MODIFIED: ', events);
       }
       else {
         const tempState = Object.assign({}, currentState());
@@ -104,7 +123,7 @@ module.exports = (() => {
     if (domEventsStr.length) {
       const matches = str.match(/^<\w+(-\w+)?(\s|>)/);
       if (!matches || !matches.length) {
-        console.error('no match for ' + str);
+        console.error('tag parse err: ' + str);
         return str;
       }
       const openTag = matches[0];
@@ -181,12 +200,14 @@ module.exports = (() => {
     };
   }
 
-  template.getState = () => currentState();
-  template.resetState = () => resetState();
-  template.setInitialState = obj => setInitialState(obj);
+  template.currentState = () => Object.assign({}, currentState());
+  template.previousState = () => Object.assign({}, previousState());
+  template.resetState = resetState;
+  template.setInitialState = setInitialState;
   template.stateHistory = () => states.map(x => x);
-  template.revertState = n => revertState(n);
-  template.on = (evt, cb) => on(evt, cb);
-  template.emit = (evt, ...args) => emit(evt, ...args);
+  template.revertState = revertState;
+  template.on = on;
+  template.emit = emit;
+  template.modifyState = func => modifyState(func);
   return template;
 })();
